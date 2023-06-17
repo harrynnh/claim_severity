@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.metrics import mean_squared_error
 from sklearn.preprocessing import LabelEncoder
 from sklearn.feature_selection import SelectKBest, f_regression
@@ -72,6 +72,7 @@ mse = mean_squared_error(y_val, y_pred)
 rmse = np.sqrt(mse)
 print(f"Linear Regression MSE: {mse}")
 print(f"Linear Regression RMSE: {rmse}")
+# mse=2117
 
 # XGBoost
 model_xgb = XGBRegressor(n_estimators=1000, learning_rate=0.05, max_depth=3)
@@ -81,3 +82,28 @@ mse_xgb = mean_squared_error(y_val, y_pred_xgb)
 rmse_xgb = np.sqrt(mse_xgb)
 print(f"XGBoost MSE: {mse_xgb}")
 print(f"XGBoost RMSE: {rmse_xgb}")
+# mse=1907
+
+# Hyperparameter tuning
+
+param_grid = {
+    "n_estimators": [100, 500],
+    "learning_rate": [0.01, 0.05],
+    "max_depth": [3, 5],
+}
+grid_search = GridSearchCV(
+    XGBRegressor(), param_grid, scoring="neg_mean_squared_error", cv=5
+)
+grid_search.fit(X_train, y_train)
+best_model = grid_search.best_estimator_
+best_params = grid_search.best_params_
+
+# Evaluate the best model
+y_pred_best_xgb = best_model.predict(X_val)
+mse_best_xgb = mean_squared_error(y_val, y_pred_best_xgb)
+rmse_best_xgb = np.sqrt(mse_best_xgb)
+print(f"Best XGBoost MSE: {mse_best_xgb}\nBest XGBoost RMSE{rmse_best_xgb}")
+print(f"Best Hyperparameters: {best_params}")
+# mse=1888
+# Best Hyperparameters: {'learning_rate': 0.05, 'max_depth': 5, 'n_estimators': 500}
+# I didn't try 1000,0.1,7 combinations because it takes lots of time to compute
