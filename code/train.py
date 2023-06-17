@@ -60,7 +60,7 @@ model.fit(X_train, y_train)
 y_pred = model.predict(X_val)
 print(mean_squared_error(y_val, y_pred))
 print(mean_squared_error(y_val, y_pred, squared=False))
-
+# mse=2118
 # Extreme Gradient Boosting
 
 model_xgb = XGBRegressor(n_estimators=1000, learning_rate=0.05, max_depth=3)
@@ -70,3 +70,4 @@ y_pred_xgb = model_xgb.predict(
 )
 print(mean_squared_error(y_pred_xgb, y_val))
 print(mean_squared_error(y_pred_xgb, y_val, squared=False))
+# mse=1098
